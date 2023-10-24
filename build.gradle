@@ -1,13 +1,15 @@
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+import org.gradle.api.tasks.testing.logging.TestLogEvent
+
 plugins {
-    id "groovy" 
-    id "org.grails.grails-gsp" 
-    id "org.grails.grails-web" 
-    id "com.github.erdi.webdriver-binaries" version "3.0"
-    id "war" 
-    id "idea" 
-    id "com.bertramlabs.asset-pipeline" 
-    id "application" 
-    id "eclipse" 
+    id "groovy"
+    id "org.grails.grails-gsp"
+    id "org.grails.grails-web"
+    id "war"
+    id "idea"
+    id "com.bertramlabs.asset-pipeline"
+    id "application"
+    id "eclipse"
 }
 
 version "0.1"
@@ -84,16 +86,14 @@ tasks.withType(Test) {
     useJUnitPlatform()
     systemProperty "geb.env", System.getProperty('geb.env')
     systemProperty "geb.build.reportsDir", reporting.file("geb/integrationTest")
-    systemProperty 'webdriver.chrome.driver', "${System.getenv('CHROMEWEBDRIVER')}/chromedriver"
-    systemProperty 'webdriver.gecko.driver', "${System.getenv('GECKOWEBDRIVER')}/geckodriver"
+    testLogging {
+        exceptionFormat = TestExceptionFormat.FULL
+        events(TestLogEvent.PASSED, TestLogEvent.FAILED, TestLogEvent.STANDARD_ERROR, TestLogEvent.STANDARD_OUT, TestLogEvent.SKIPPED)
+        showStandardStreams = true
+    }
 }
 tasks.withType(War).configureEach { War war ->
     war.dependsOn compileGroovyPages
-}
-webdriverBinaries {
-    chromedriver '110.0.5481.77'
-    geckodriver '0.32.2'
-    edgedriver '110.0.1587.57'
 }
 assets {
     minifyJs = true
